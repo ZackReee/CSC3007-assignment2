@@ -14,13 +14,7 @@
 <div id="my_dataviz"></div>
 <div class="tooltip" id="mytooltip"></div>
     <script>
-        fetch('https://data.gov.sg/api/action/datastore_search?resource_id=83c21090-bd19-4b54-ab6b-d999c251edcf&q=2020')
-        .then(res => res.json())
-        .then((out) => {
-        createChart(out);
-        }).catch(err => console.error(err));
-
-        function createChart(dat){
+        d3.json("https://data.gov.sg/api/action/datastore_search?resource_id=83c21090-bd19-4b54-ab6b-d999c251edcf&q=2020").then( function(dat) {
             console.log("My chart is: ", dat.result.records)
             var arr = []
             for(i in dat.result.records){
@@ -56,7 +50,7 @@
     .style("margin-left", "10px")
         
         // Parse the Data
-        d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/7_OneCatOneNum_header.csv").then( function(data) {
+        d3.csv("https://data.gov.sg/api/action/datastore_search?resource_id=83c21090-bd19-4b54-ab6b-d999c251edcf&q=2020").then( function(data) {
         
         // X axis
         const x = d3.scaleBand()
@@ -114,7 +108,7 @@
       .style("opacity", 0)
   }
 
-        }
+        })
     </script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
