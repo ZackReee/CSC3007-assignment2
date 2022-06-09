@@ -9,8 +9,10 @@
     <meta charset="utf-8">
         <!-- Load d3.js -->
         <script src="https://d3js.org/d3.v6.js"></script>
+        <div class="tooltip" style="left: 500px; bottom: 400px; z-index:1000;"></div>
     <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
+<div class="tooltip" id="mytooltip"></div>
     <script>
         fetch('https://data.gov.sg/api/action/datastore_search?resource_id=83c21090-bd19-4b54-ab6b-d999c251edcf&q=2020')
         .then(res => res.json())
@@ -25,24 +27,33 @@
                 arr[i] = { "Crime":dat.result.records[i].level_2 , "Value":dat.result.records[i].value }
                 console.log(arr[i].Crime)
             }
+            console.log("arr: ", arr)
             // set the dimensions and margins of the graph
         const margin = {top: 10, right: 80, bottom: 100, left: 40},
-            width = 550 - margin.left - margin.right,
+            width = 550,
+            height = 210,
             myWidth= width + margin.left + margin.right,
-            height = 690 - margin.top - margin.bottom,
             myHeight= height + margin.top + margin.bottom;
         
         // append the svg object to the body of the page
         const svg = d3.select("#my_dataviz")
           .append("svg")
-            .attr("width", '40%')
-            .attr("height", '40%')
             .attr('viewBox', '0 0 ' + myWidth + ' ' + myHeight)
-            // .attr("perserveAspectRatio", xMinYMid)
-            // .attr("viewBox", `0 0 width + margin.left + margin.right height + margin.top + margin.bottom`)
-            .attr("preserveAspectRatio", "xMidYMid meet")
           .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                // ----------------
+  // Create a tooltip
+  // ----------------
+  var tooltip = d3.select("#my_dataviz")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("margin-left", "10px")
         
         // Parse the Data
         d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/7_OneCatOneNum_header.csv").then( function(data) {
@@ -53,6 +64,7 @@
           .domain(arr.map(d => d.Crime))
           .padding(0.2);
         svg.append("g")
+          .attr("z-index", "-1")
           .attr("transform", `translate(0,${height})`)
           .call(d3.axisBottom(x))
           .selectAll("text")
@@ -65,13 +77,6 @@
           .range([ height, 0]);
         svg.append("g")
           .call(d3.axisLeft(y));
-
-        // const y2 = d3.scaleLinear()
-        //   .domain([0, 17000])
-        //   .range([ height, 0]);
-        // svg.append("g")
-        // .attr("transform", "translate(" + width + "," + 0 + ")")
-        //   .call(d3.axisRight(y2));
         
         // Bars
         svg.selectAll("mybar")
@@ -83,6 +88,14 @@
             // no bar at the beginning thus:
             .attr("height", d => height - y(0)) // always equal to 0
             .attr("y", d => y(0))
+            .on("mouseover", function(d, i) {
+              tooltip
+        .html(i.Crime +" " + i.Value)
+        .style("opacity", 1)
+        .style("top", (event.pageY)+"px")
+        .style("left",(event.pageX)+"px")
+            })
+            .on("mouseleave", mouseleave)
         
         // Animation
         svg.selectAll("rect")
@@ -95,6 +108,12 @@
         })
 
         console.log("SVG DONE")
+
+  var mouseleave = function(d) {
+    tooltip
+      .style("opacity", 0)
+  }
+
         }
     </script>
 
