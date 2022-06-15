@@ -23,9 +23,9 @@
             }
             console.log("arr: ", arr)
             // set the dimensions and margins of the graph
-        const margin = {top: 10, right: 80, bottom: 100, left: 40},
+        const margin = {top: 10, right: 80, bottom: 70, left: 40},
             width = 550,
-            height = 210,
+            height = 240
             myWidth= width + margin.left + margin.right,
             myHeight= height + margin.top + margin.bottom;
         
@@ -58,6 +58,7 @@
           .domain(arr.map(d => d.Crime))
           .padding(0.2);
         svg.append("g")
+          .style("font-size", "6px")
           .attr("z-index", "-1")
           .attr("transform", `translate(0,${height})`)
           .call(d3.axisBottom(x))
